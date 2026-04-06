@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:motorflow/domain/entities/maintenance.dart';
 import 'package:motorflow/core/utils/date_formatter.dart';
 import 'package:motorflow/domain/entities/vehicle.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class AddMaintenancePage extends StatefulWidget {
-  const AddMaintenancePage({super.key, required this.repository});
+  const AddMaintenancePage({
+    super.key,
+    required this.repository,
+    this.maintenance,
+  });
 
   final MotorflowRepository repository;
+  final Maintenance? maintenance;
 
   @override
   State<AddMaintenancePage> createState() => _AddMaintenancePageState();
@@ -25,12 +31,23 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
   Vehicle? _selectedVehicle;
   DateTime _dataTroca = DateTime.now();
   DateTime _dataProxima = DateTime.now().add(const Duration(days: 180));
+  bool get _isEditing => widget.maintenance != null;
 
   @override
   void initState() {
     super.initState();
     final vehicles = widget.repository.vehicles;
-    if (vehicles.isNotEmpty) {
+    final maintenance = widget.maintenance;
+    if (maintenance != null) {
+      _selectedVehicle = widget.repository.vehicleById(maintenance.vehicleId);
+      _tipoController.text = maintenance.tipo;
+      _descricaoController.text = maintenance.descricao;
+      _kmTrocaController.text = maintenance.kmTroca.toString();
+      _kmProximaController.text = maintenance.kmProximaTroca.toString();
+      _custoController.text = maintenance.custo.toStringAsFixed(2);
+      _dataTroca = maintenance.dataTroca;
+      _dataProxima = maintenance.dataProximaTroca;
+    } else if (vehicles.isNotEmpty) {
       _selectedVehicle = vehicles.first;
     }
     _dataTrocaController.text = formatDatePtBr(_dataTroca);
@@ -53,7 +70,9 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
   Widget build(BuildContext context) {
     final vehicles = widget.repository.vehicles;
     return Scaffold(
-      appBar: AppBar(title: const Text('Nova manutencao')),
+      appBar: AppBar(
+        title: Text(_isEditing ? 'Editar manutencao' : 'Nova manutencao'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -134,7 +153,9 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: _save,
-                child: const Text('Salvar manutencao'),
+                child: Text(
+                  _isEditing ? 'Salvar alteracoes' : 'Salvar manutencao',
+                ),
               ),
             ],
           ),
@@ -184,16 +205,30 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
     if (!_formKey.currentState!.validate() || _selectedVehicle == null) {
       return;
     }
-    widget.repository.addMaintenance(
-      vehicleId: _selectedVehicle!.id,
-      tipo: _tipoController.text.trim(),
-      descricao: _descricaoController.text.trim(),
-      kmTroca: int.parse(_kmTrocaController.text),
-      dataTroca: _dataTroca,
-      kmProximaTroca: int.parse(_kmProximaController.text),
-      dataProximaTroca: _dataProxima,
-      custo: double.parse(_custoController.text.replaceAll(',', '.')),
-    );
+    if (_isEditing) {
+      widget.repository.updateMaintenance(
+        id: widget.maintenance!.id,
+        vehicleId: _selectedVehicle!.id,
+        tipo: _tipoController.text.trim(),
+        descricao: _descricaoController.text.trim(),
+        kmTroca: int.parse(_kmTrocaController.text),
+        dataTroca: _dataTroca,
+        kmProximaTroca: int.parse(_kmProximaController.text),
+        dataProximaTroca: _dataProxima,
+        custo: double.parse(_custoController.text.replaceAll(',', '.')),
+      );
+    } else {
+      widget.repository.addMaintenance(
+        vehicleId: _selectedVehicle!.id,
+        tipo: _tipoController.text.trim(),
+        descricao: _descricaoController.text.trim(),
+        kmTroca: int.parse(_kmTrocaController.text),
+        dataTroca: _dataTroca,
+        kmProximaTroca: int.parse(_kmProximaController.text),
+        dataProximaTroca: _dataProxima,
+        custo: double.parse(_custoController.text.replaceAll(',', '.')),
+      );
+    }
     Navigator.of(context).pop();
   }
 }

@@ -20,6 +20,14 @@ abstract class MotorflowRepository extends ChangeNotifier {
     required int ano,
     required int kmAtual,
   });
+  void updateVehicle({
+    required String id,
+    required String nome,
+    required String modelo,
+    required int ano,
+    required int kmAtual,
+  });
+  void deleteVehicle(String id);
 
   void addMaintenance({
     required String vehicleId,
@@ -31,6 +39,18 @@ abstract class MotorflowRepository extends ChangeNotifier {
     required DateTime dataProximaTroca,
     required double custo,
   });
+  void updateMaintenance({
+    required String id,
+    required String vehicleId,
+    required String tipo,
+    required String descricao,
+    required int kmTroca,
+    required DateTime dataTroca,
+    required int kmProximaTroca,
+    required DateTime dataProximaTroca,
+    required double custo,
+  });
+  void deleteMaintenance(String id);
 
   void addFuelRecord({
     required String vehicleId,
@@ -42,6 +62,18 @@ abstract class MotorflowRepository extends ChangeNotifier {
     required String tipoCombustivel,
     required String observacoes,
   });
+  void updateFuelRecord({
+    required String id,
+    required String vehicleId,
+    required DateTime data,
+    required int kmAtual,
+    required double precoLitro,
+    required double valorTotal,
+    required String nomePosto,
+    required String tipoCombustivel,
+    required String observacoes,
+  });
+  void deleteFuelRecord(String id);
 
   void updateFuelSettings({
     double? precoPadraoGasolina,

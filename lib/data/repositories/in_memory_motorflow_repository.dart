@@ -91,6 +91,43 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
   }
 
   @override
+  void updateVehicle({
+    required String id,
+    required String nome,
+    required String modelo,
+    required int ano,
+    required int kmAtual,
+  }) {
+    final index = _vehicles.indexWhere((vehicle) => vehicle.id == id);
+    if (index == -1) {
+      return;
+    }
+    _vehicles[index] = Vehicle(
+      id: id,
+      nome: nome,
+      modelo: modelo,
+      ano: ano,
+      kmAtual: kmAtual,
+    );
+    _saveSnapshot();
+    notifyListeners();
+  }
+
+  @override
+  void deleteVehicle(String id) {
+    final initialLength = _vehicles.length;
+    _vehicles.removeWhere((vehicle) => vehicle.id == id);
+    final hasRemoved = _vehicles.length < initialLength;
+    if (!hasRemoved) {
+      return;
+    }
+    _maintenances.removeWhere((maintenance) => maintenance.vehicleId == id);
+    _fuelRecords.removeWhere((fuelRecord) => fuelRecord.vehicleId == id);
+    _saveSnapshot();
+    notifyListeners();
+  }
+
+  @override
   void addMaintenance({
     required String vehicleId,
     required String tipo,
@@ -115,6 +152,51 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         custo: custo,
       ),
     );
+    _saveSnapshot();
+    notifyListeners();
+  }
+
+  @override
+  void updateMaintenance({
+    required String id,
+    required String vehicleId,
+    required String tipo,
+    required String descricao,
+    required int kmTroca,
+    required DateTime dataTroca,
+    required int kmProximaTroca,
+    required DateTime dataProximaTroca,
+    required double custo,
+  }) {
+    final index = _maintenances.indexWhere(
+      (maintenance) => maintenance.id == id,
+    );
+    if (index == -1) {
+      return;
+    }
+    _maintenances[index] = Maintenance(
+      id: id,
+      vehicleId: vehicleId,
+      tipo: tipo,
+      descricao: descricao,
+      kmTroca: kmTroca,
+      dataTroca: dataTroca,
+      kmProximaTroca: kmProximaTroca,
+      dataProximaTroca: dataProximaTroca,
+      custo: custo,
+    );
+    _saveSnapshot();
+    notifyListeners();
+  }
+
+  @override
+  void deleteMaintenance(String id) {
+    final initialLength = _maintenances.length;
+    _maintenances.removeWhere((maintenance) => maintenance.id == id);
+    final hasRemoved = _maintenances.length < initialLength;
+    if (!hasRemoved) {
+      return;
+    }
     _saveSnapshot();
     notifyListeners();
   }
@@ -146,6 +228,50 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         observacoes: observacoes,
       ),
     );
+    _saveSnapshot();
+    notifyListeners();
+  }
+
+  @override
+  void updateFuelRecord({
+    required String id,
+    required String vehicleId,
+    required DateTime data,
+    required int kmAtual,
+    required double precoLitro,
+    required double valorTotal,
+    required String nomePosto,
+    required String tipoCombustivel,
+    required String observacoes,
+  }) {
+    final index = _fuelRecords.indexWhere((fuelRecord) => fuelRecord.id == id);
+    if (index == -1) {
+      return;
+    }
+    _fuelRecords[index] = FuelRecord(
+      id: id,
+      vehicleId: vehicleId,
+      data: data,
+      kmAtual: kmAtual,
+      precoLitro: precoLitro,
+      valorTotal: valorTotal,
+      litros: valorTotal / precoLitro,
+      nomePosto: nomePosto,
+      tipoCombustivel: tipoCombustivel,
+      observacoes: observacoes,
+    );
+    _saveSnapshot();
+    notifyListeners();
+  }
+
+  @override
+  void deleteFuelRecord(String id) {
+    final initialLength = _fuelRecords.length;
+    _fuelRecords.removeWhere((fuelRecord) => fuelRecord.id == id);
+    final hasRemoved = _fuelRecords.length < initialLength;
+    if (!hasRemoved) {
+      return;
+    }
     _saveSnapshot();
     notifyListeners();
   }

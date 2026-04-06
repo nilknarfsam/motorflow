@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:motorflow/core/utils/date_formatter.dart';
+import 'package:motorflow/domain/entities/fuel_record.dart';
 import 'package:motorflow/domain/entities/vehicle.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class AddFuelRecordPage extends StatefulWidget {
-  const AddFuelRecordPage({super.key, required this.repository});
+  const AddFuelRecordPage({
+    super.key,
+    required this.repository,
+    this.fuelRecord,
+  });
 
   final MotorflowRepository repository;
+  final FuelRecord? fuelRecord;
 
   @override
   State<AddFuelRecordPage> createState() => _AddFuelRecordPageState();
@@ -26,20 +32,34 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
   Vehicle? _selectedVehicle;
   DateTime _data = DateTime.now();
   bool _usarPrecoPadraoGasolina = false;
+  bool get _isEditing => widget.fuelRecord != null;
 
   @override
   void initState() {
     super.initState();
     final vehicles = widget.repository.vehicles;
-    if (vehicles.isNotEmpty) {
-      _selectedVehicle = vehicles.first;
+    final fuelRecord = widget.fuelRecord;
+    if (fuelRecord != null) {
+      _selectedVehicle = widget.repository.vehicleById(fuelRecord.vehicleId);
+      _data = fuelRecord.data;
+      _kmAtualController.text = fuelRecord.kmAtual.toString();
+      _precoLitroController.text = fuelRecord.precoLitro.toStringAsFixed(2);
+      _valorTotalController.text = fuelRecord.valorTotal.toStringAsFixed(2);
+      _tipoCombustivelController.text = fuelRecord.tipoCombustivel;
+      _nomePostoController.text = fuelRecord.nomePosto;
+      _observacoesController.text = fuelRecord.observacoes;
+      _litrosController.text = fuelRecord.litros.toStringAsFixed(2);
+    } else {
+      if (vehicles.isNotEmpty) {
+        _selectedVehicle = vehicles.first;
+      }
+      _precoLitroController.text = widget
+          .repository
+          .fuelSettings
+          .precoPadraoGasolina
+          .toStringAsFixed(2);
     }
     _dataController.text = formatDatePtBr(_data);
-    _precoLitroController.text = widget
-        .repository
-        .fuelSettings
-        .precoPadraoGasolina
-        .toStringAsFixed(2);
   }
 
   @override
@@ -58,7 +78,9 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo abastecimento')),
+      appBar: AppBar(
+        title: Text(_isEditing ? 'Editar abastecimento' : 'Novo abastecimento'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -165,7 +187,9 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: _save,
-                child: const Text('Salvar abastecimento'),
+                child: Text(
+                  _isEditing ? 'Salvar alteracoes' : 'Salvar abastecimento',
+                ),
               ),
             ],
           ),
@@ -222,16 +246,38 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
       return;
     }
 
-    widget.repository.addFuelRecord(
-      vehicleId: _selectedVehicle!.id,
-      data: _data,
-      kmAtual: int.parse(_kmAtualController.text),
-      precoLitro: double.parse(_precoLitroController.text.replaceAll(',', '.')),
-      valorTotal: double.parse(_valorTotalController.text.replaceAll(',', '.')),
-      nomePosto: _nomePostoController.text.trim(),
-      tipoCombustivel: _tipoCombustivelController.text.trim(),
-      observacoes: _observacoesController.text.trim(),
-    );
+    if (_isEditing) {
+      widget.repository.updateFuelRecord(
+        id: widget.fuelRecord!.id,
+        vehicleId: _selectedVehicle!.id,
+        data: _data,
+        kmAtual: int.parse(_kmAtualController.text),
+        precoLitro: double.parse(
+          _precoLitroController.text.replaceAll(',', '.'),
+        ),
+        valorTotal: double.parse(
+          _valorTotalController.text.replaceAll(',', '.'),
+        ),
+        nomePosto: _nomePostoController.text.trim(),
+        tipoCombustivel: _tipoCombustivelController.text.trim(),
+        observacoes: _observacoesController.text.trim(),
+      );
+    } else {
+      widget.repository.addFuelRecord(
+        vehicleId: _selectedVehicle!.id,
+        data: _data,
+        kmAtual: int.parse(_kmAtualController.text),
+        precoLitro: double.parse(
+          _precoLitroController.text.replaceAll(',', '.'),
+        ),
+        valorTotal: double.parse(
+          _valorTotalController.text.replaceAll(',', '.'),
+        ),
+        nomePosto: _nomePostoController.text.trim(),
+        tipoCombustivel: _tipoCombustivelController.text.trim(),
+        observacoes: _observacoesController.text.trim(),
+      );
+    }
 
     Navigator.of(context).pop();
   }

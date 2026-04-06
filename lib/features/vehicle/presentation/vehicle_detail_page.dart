@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:motorflow/core/widgets/mf_confirm_dialog.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
+import 'package:motorflow/features/vehicle/presentation/add_vehicle_page.dart';
 
 class VehicleDetailPage extends StatelessWidget {
   VehicleDetailPage({
@@ -29,7 +31,48 @@ class VehicleDetailPage extends StatelessWidget {
         final fuels = repository.fuelRecordsByVehicle(vehicleId);
 
         return Scaffold(
-          appBar: AppBar(title: Text(vehicle.nome)),
+          appBar: AppBar(
+            title: Text(vehicle.nome),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => AddVehiclePage(
+                        repository: repository,
+                        vehicle: vehicle,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.edit_outlined),
+                tooltip: 'Editar',
+              ),
+              IconButton(
+                onPressed: () async {
+                  final confirmed = await showMfConfirmDialog(
+                    context: context,
+                    title: 'Excluir veiculo',
+                    message:
+                        'Deseja excluir ${vehicle.nome}? As manutencoes e abastecimentos vinculados tambem serao removidos.',
+                  );
+                  if (!confirmed) {
+                    return;
+                  }
+                  repository.deleteVehicle(vehicle.id);
+                  if (!context.mounted) {
+                    return;
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Veiculo excluido.')),
+                  );
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Excluir',
+              ),
+            ],
+          ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [

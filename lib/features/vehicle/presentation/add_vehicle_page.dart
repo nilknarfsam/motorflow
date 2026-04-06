@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:motorflow/domain/entities/vehicle.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class AddVehiclePage extends StatefulWidget {
-  const AddVehiclePage({super.key, required this.repository});
+  const AddVehiclePage({super.key, required this.repository, this.vehicle});
 
   final MotorflowRepository repository;
+  final Vehicle? vehicle;
 
   @override
   State<AddVehiclePage> createState() => _AddVehiclePageState();
@@ -16,6 +18,20 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
   final _modeloController = TextEditingController();
   final _anoController = TextEditingController();
   final _kmAtualController = TextEditingController();
+
+  bool get _isEditing => widget.vehicle != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final vehicle = widget.vehicle;
+    if (vehicle != null) {
+      _nomeController.text = vehicle.nome;
+      _modeloController.text = vehicle.modelo;
+      _anoController.text = vehicle.ano.toString();
+      _kmAtualController.text = vehicle.kmAtual.toString();
+    }
+  }
 
   @override
   void dispose() {
@@ -29,7 +45,9 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo veiculo')),
+      appBar: AppBar(
+        title: Text(_isEditing ? 'Editar veiculo' : 'Novo veiculo'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -61,7 +79,9 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: _save,
-                child: const Text('Salvar veiculo'),
+                child: Text(
+                  _isEditing ? 'Salvar alteracoes' : 'Salvar veiculo',
+                ),
               ),
             ],
           ),
@@ -91,12 +111,22 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    widget.repository.addVehicle(
-      nome: _nomeController.text.trim(),
-      modelo: _modeloController.text.trim(),
-      ano: int.parse(_anoController.text),
-      kmAtual: int.parse(_kmAtualController.text),
-    );
+    if (_isEditing) {
+      widget.repository.updateVehicle(
+        id: widget.vehicle!.id,
+        nome: _nomeController.text.trim(),
+        modelo: _modeloController.text.trim(),
+        ano: int.parse(_anoController.text),
+        kmAtual: int.parse(_kmAtualController.text),
+      );
+    } else {
+      widget.repository.addVehicle(
+        nome: _nomeController.text.trim(),
+        modelo: _modeloController.text.trim(),
+        ano: int.parse(_anoController.text),
+        kmAtual: int.parse(_kmAtualController.text),
+      );
+    }
     Navigator.of(context).pop();
   }
 }
