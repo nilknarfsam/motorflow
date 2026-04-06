@@ -7,6 +7,8 @@ import 'package:motorflow/core/widgets/mf_status_chip.dart';
 import 'package:motorflow/domain/alerts/maintenance_alert.dart';
 import 'package:motorflow/domain/alerts/maintenance_alert_center.dart';
 import 'package:motorflow/domain/alerts/maintenance_alert_summary.dart';
+import 'package:motorflow/domain/fuel_metrics/fuel_metrics_center.dart';
+import 'package:motorflow/domain/fuel_metrics/fuel_metrics_models.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -21,6 +23,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final _gasolinaController = TextEditingController();
   final _alertCenter = const MaintenanceAlertCenter();
+  final _fuelMetricsCenter = const FuelMetricsCenter();
 
   @override
   void initState() {
@@ -47,6 +50,9 @@ class _DashboardPageState extends State<DashboardPage> {
         final summary = _alertCenter.buildSummary(
           maintenances: widget.repository.maintenances,
           vehicles: widget.repository.vehicles,
+        );
+        final fuelSummary = _fuelMetricsCenter.buildSummary(
+          records: widget.repository.fuelRecords,
         );
         return MfPageScaffold(
           title: 'Dashboard',
@@ -76,6 +82,8 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               const SizedBox(height: MotorflowSpacing.lg),
               _MaintenanceAlertsCard(summary: summary),
+              const SizedBox(height: MotorflowSpacing.lg),
+              _FuelMetricsCard(summary: fuelSummary),
               const SizedBox(height: MotorflowSpacing.lg),
               Card(
                 child: Padding(
@@ -140,6 +148,99 @@ class _DashboardPageState extends State<DashboardPage> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+class _FuelMetricsCard extends StatelessWidget {
+  const _FuelMetricsCard({required this.summary});
+
+  final FuelMetricsSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(MotorflowSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Inteligencia de combustivel',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: MotorflowSpacing.sm),
+            Wrap(
+              spacing: MotorflowSpacing.sm,
+              runSpacing: MotorflowSpacing.sm,
+              children: [
+                _FuelMetricTile(
+                  label: 'Consumo medio',
+                  value: _formatMetric(
+                    summary.averageConsumptionKmPerLiter,
+                    suffix: ' km/L',
+                  ),
+                ),
+                _FuelMetricTile(
+                  label: 'Custo por km',
+                  value: _formatMetric(
+                    summary.averageCostPerKm,
+                    prefix: 'R\$ ',
+                  ),
+                ),
+                _FuelMetricTile(
+                  label: 'Gasto no mes',
+                  value: 'R\$ ${summary.totalSpentMonth.toStringAsFixed(2)}',
+                ),
+                _FuelMetricTile(
+                  label: 'Litros no mes',
+                  value: '${summary.totalLitersMonth.toStringAsFixed(2)} L',
+                ),
+                _FuelMetricTile(
+                  label: 'Preco medio/L',
+                  value: _formatMetric(
+                    summary.averagePricePerLiterMonth,
+                    prefix: 'R\$ ',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatMetric(
+    double? value, {
+    String prefix = '',
+    String suffix = '',
+  }) {
+    if (value == null) {
+      return '--';
+    }
+    return '$prefix${value.toStringAsFixed(2)}$suffix';
+  }
+}
+
+class _FuelMetricTile extends StatelessWidget {
+  const _FuelMetricTile({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 150,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.labelLarge),
+          const SizedBox(height: MotorflowSpacing.xxs),
+          Text(value, style: Theme.of(context).textTheme.titleMedium),
+        ],
+      ),
+    );
   }
 }
 
