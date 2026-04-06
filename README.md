@@ -1,17 +1,59 @@
-# motorflow
+# MotorFlow
 
-A new Flutter project.
+Aplicativo Flutter para gestão automotiva moderna, com foco em manutenção preventiva, abastecimentos, consumo e controle de custos do veículo.
 
-## Getting Started
+## Visão do projeto
 
-This project is a starting point for a Flutter application.
+O MotorFlow foi pensado para ajudar o usuário a manter o carro em dia, organizar o histórico de manutenção e acompanhar os gastos com combustível de forma inteligente.
 
-A few resources to get you started if this is your first Flutter project:
+## Principais objetivos
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Controle de manutenção preventiva
+- Histórico de serviços realizados
+- Registro de abastecimentos
+- Cálculo de consumo e custos
+- Lembretes de revisão e troca de itens importantes
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Estrutura atual
+
+- Flutter
+- Material 3
+- Arquitetura organizada por camadas
+- Navegação inferior
+- Fluxo inicial funcional para evolução futura
+
+## Módulos atuais
+
+- Dashboard
+- Veículos
+- Manutenções
+- Abastecimentos
+
+## Funcionalidades já implementadas
+
+- Cadastro de veículo
+- Listagem e detalhe do veículo
+- Cadastro de manutenção
+- Cadastro de abastecimento
+- Cálculo automático de litros
+- Configuração de preço padrão da gasolina
+- Persistência local simples em memória
+
+## Próximas evoluções
+
+- Persistência local real
+- Notificações e lembretes
+- Relatórios e gráficos
+- Central de alertas
+- Múltiplos veículos
+- Backup e restauração
+
+## Tecnologias
+
+- Flutter
+- Dart
+- Material 3
+
+## Status
+
+Projeto em desenvolvimento.
