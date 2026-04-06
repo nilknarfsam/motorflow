@@ -5,6 +5,9 @@ import 'package:motorflow/core/widgets/mf_confirm_dialog.dart';
 import 'package:motorflow/core/widgets/mf_empty_state.dart';
 import 'package:motorflow/core/widgets/mf_list_item_card.dart';
 import 'package:motorflow/core/widgets/mf_page_scaffold.dart';
+import 'package:motorflow/core/widgets/mf_status_chip.dart';
+import 'package:motorflow/domain/alerts/maintenance_alert.dart';
+import 'package:motorflow/domain/alerts/maintenance_alert_center.dart';
 import 'package:motorflow/domain/entities/maintenance.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 import 'package:motorflow/features/maintenance/presentation/add_maintenance_page.dart';
@@ -14,6 +17,7 @@ class MaintenancePage extends StatelessWidget {
 
   final MotorflowRepository repository;
   final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
+  final MaintenanceAlertCenter _alertCenter = const MaintenanceAlertCenter();
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,13 @@ class MaintenancePage extends StatelessWidget {
       animation: repository,
       builder: (context, _) {
         final items = repository.maintenances;
+        final alerts = _alertCenter.buildAlerts(
+          maintenances: items,
+          vehicles: repository.vehicles,
+        );
+        final statusByMaintenanceId = {
+          for (final alert in alerts) alert.maintenanceId: alert.status,
+        };
         return MfPageScaffold(
           title: 'Manutencoes',
           floatingActionButton: FloatingActionButton.extended(
@@ -55,6 +66,14 @@ class MaintenancePage extends StatelessWidget {
                       title: '${item.tipo} - ${vehicle?.nome ?? 'Veiculo'}',
                       subtitle:
                           '${item.descricao}\nR\$ ${item.custo.toStringAsFixed(2)} | ${_dateFormat.format(item.dataTroca)}',
+                      footer: Align(
+                        alignment: Alignment.centerLeft,
+                        child: MfStatusChip(
+                          status:
+                              statusByMaintenanceId[item.id] ??
+                              MaintenanceAlertStatus.neutral,
+                        ),
+                      ),
                       trailing: PopupMenuButton<_MaintenanceAction>(
                         onSelected: (action) async {
                           if (action == _MaintenanceAction.edit) {

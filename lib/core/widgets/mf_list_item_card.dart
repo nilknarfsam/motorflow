@@ -9,6 +9,7 @@ class MfListItemCard extends StatelessWidget {
     required this.subtitle,
     this.onTap,
     this.trailing,
+    this.footer,
   });
 
   final IconData icon;
@@ -16,6 +17,7 @@ class MfListItemCard extends StatelessWidget {
   final String subtitle;
   final VoidCallback? onTap;
   final Widget? trailing;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,10 @@ class MfListItemCard extends StatelessWidget {
                       subtitle,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
+                    if (footer != null) ...[
+                      const SizedBox(height: MotorflowSpacing.xs),
+                      footer!,
+                    ],
                   ],
                 ),
               ),

@@ -4,6 +4,9 @@ import 'package:motorflow/core/widgets/mf_confirm_dialog.dart';
 import 'package:motorflow/core/widgets/mf_empty_state.dart';
 import 'package:motorflow/core/widgets/mf_list_item_card.dart';
 import 'package:motorflow/core/widgets/mf_page_scaffold.dart';
+import 'package:motorflow/core/widgets/mf_status_chip.dart';
+import 'package:motorflow/domain/alerts/maintenance_alert.dart';
+import 'package:motorflow/domain/alerts/maintenance_alert_center.dart';
 import 'package:motorflow/domain/entities/vehicle.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 import 'package:motorflow/features/vehicle/presentation/add_vehicle_page.dart';
@@ -13,6 +16,7 @@ class VehiclePage extends StatelessWidget {
   const VehiclePage({super.key, required this.repository});
 
   final MotorflowRepository repository;
+  static const MaintenanceAlertCenter _alertCenter = MaintenanceAlertCenter();
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +24,10 @@ class VehiclePage extends StatelessWidget {
       animation: repository,
       builder: (context, _) {
         final vehicles = repository.vehicles;
+        final alerts = _alertCenter.buildAlerts(
+          maintenances: repository.maintenances,
+          vehicles: vehicles,
+        );
         return MfPageScaffold(
           title: 'Veiculos',
           floatingActionButton: FloatingActionButton.extended(
@@ -45,11 +53,19 @@ class VehiclePage extends StatelessWidget {
                       const SizedBox(height: MotorflowSpacing.sm),
                   itemBuilder: (context, index) {
                     final vehicle = vehicles[index];
+                    final vehicleAlerts = alerts
+                        .where((alert) => alert.vehicleId == vehicle.id)
+                        .toList();
+                    final worstStatus = _resolveVehicleStatus(vehicleAlerts);
                     return MfListItemCard(
                       icon: Icons.directions_car_outlined,
                       title: vehicle.nome,
                       subtitle:
                           '${vehicle.modelo} | ${vehicle.ano} | ${vehicle.kmAtual} km',
+                      footer: Align(
+                        alignment: Alignment.centerLeft,
+                        child: MfStatusChip(status: worstStatus),
+                      ),
                       trailing: PopupMenuButton<_VehicleAction>(
                         onSelected: (action) async {
                           if (action == _VehicleAction.details) {
@@ -107,6 +123,22 @@ class VehiclePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  MaintenanceAlertStatus _resolveVehicleStatus(List<MaintenanceAlert> alerts) {
+    if (alerts.isEmpty) {
+      return MaintenanceAlertStatus.neutral;
+    }
+    if (alerts.any((alert) => alert.status == MaintenanceAlertStatus.overdue)) {
+      return MaintenanceAlertStatus.overdue;
+    }
+    if (alerts.any((alert) => alert.status == MaintenanceAlertStatus.dueSoon)) {
+      return MaintenanceAlertStatus.dueSoon;
+    }
+    if (alerts.any((alert) => alert.status == MaintenanceAlertStatus.onTime)) {
+      return MaintenanceAlertStatus.onTime;
+    }
+    return MaintenanceAlertStatus.neutral;
   }
 
   Future<void> _deleteVehicleWithConfirm(
