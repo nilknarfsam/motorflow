@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:motorflow/data/local/memory_motorflow_local_store.dart';
 import 'package:motorflow/data/local/motorflow_local_store.dart';
 import 'package:motorflow/data/models/motorflow_snapshot.dart';
@@ -8,9 +10,16 @@ import 'package:motorflow/domain/entities/vehicle.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class InMemoryMotorflowRepository extends MotorflowRepository {
-  InMemoryMotorflowRepository({MotorflowLocalStore? localStore})
-    : _localStore = localStore ?? MemoryMotorflowLocalStore() {
-    _hydrateFromSnapshot();
+  InMemoryMotorflowRepository._(this._localStore);
+
+  static Future<InMemoryMotorflowRepository> create({
+    MotorflowLocalStore? localStore,
+  }) async {
+    final repository = InMemoryMotorflowRepository._(
+      localStore ?? MemoryMotorflowLocalStore(),
+    );
+    await repository._hydrateFromSnapshot();
+    return repository;
   }
 
   final MotorflowLocalStore _localStore;
@@ -77,7 +86,7 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         kmAtual: kmAtual,
       ),
     );
-    _persistSnapshot();
+    _saveSnapshot();
     notifyListeners();
   }
 
@@ -106,7 +115,7 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         custo: custo,
       ),
     );
-    _persistSnapshot();
+    _saveSnapshot();
     notifyListeners();
   }
 
@@ -137,7 +146,7 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         observacoes: observacoes,
       ),
     );
-    _persistSnapshot();
+    _saveSnapshot();
     notifyListeners();
   }
 
@@ -152,31 +161,35 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
       precoPadraoEtanol: precoPadraoEtanol,
       precoPadraoDiesel: precoPadraoDiesel,
     );
-    _persistSnapshot();
+    _saveSnapshot();
     notifyListeners();
   }
 
-  void _hydrateFromSnapshot() {
-    final snapshot = _localStore.readSnapshot();
-    if (snapshot == null) {
-      return;
+  Future<void> _hydrateFromSnapshot() async {
+    try {
+      final snapshot = await _localStore.readSnapshot();
+      if (snapshot == null) {
+        return;
+      }
+      _vehicles
+        ..clear()
+        ..addAll(snapshot.vehicles);
+      _maintenances
+        ..clear()
+        ..addAll(snapshot.maintenances);
+      _fuelRecords
+        ..clear()
+        ..addAll(snapshot.fuelRecords);
+      _fuelSettings = snapshot.fuelSettings;
+      _vehicleCounter = snapshot.vehicleCounter;
+      _maintenanceCounter = snapshot.maintenanceCounter;
+      _fuelCounter = snapshot.fuelCounter;
+    } catch (_) {
+      // Fail-safe: keep valid empty in-memory state.
     }
-    _vehicles
-      ..clear()
-      ..addAll(snapshot.vehicles);
-    _maintenances
-      ..clear()
-      ..addAll(snapshot.maintenances);
-    _fuelRecords
-      ..clear()
-      ..addAll(snapshot.fuelRecords);
-    _fuelSettings = snapshot.fuelSettings;
-    _vehicleCounter = snapshot.vehicleCounter;
-    _maintenanceCounter = snapshot.maintenanceCounter;
-    _fuelCounter = snapshot.fuelCounter;
   }
 
-  void _persistSnapshot() {
+  void _saveSnapshot() {
     final snapshot = MotorflowSnapshot(
       vehicles: List<Vehicle>.from(_vehicles),
       maintenances: List<Maintenance>.from(_maintenances),
@@ -186,6 +199,14 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
       maintenanceCounter: _maintenanceCounter,
       fuelCounter: _fuelCounter,
     );
-    _localStore.writeSnapshot(snapshot);
+    unawaited(_writeSnapshot(snapshot));
+  }
+
+  Future<void> _writeSnapshot(MotorflowSnapshot snapshot) async {
+    try {
+      await _localStore.writeSnapshot(snapshot);
+    } catch (_) {
+      // Fail-safe: write failures should not interrupt user flow.
+    }
   }
 }

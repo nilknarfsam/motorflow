@@ -5,10 +5,13 @@ class MemoryMotorflowLocalStore extends MotorflowLocalStore {
   MotorflowSnapshot? _snapshot;
 
   @override
-  MotorflowSnapshot? readSnapshot() => _snapshot;
+  Future<MotorflowSnapshot?> readSnapshot() async => _snapshot;
 
   @override
-  void writeSnapshot(MotorflowSnapshot snapshot) {
+  Future<void> writeSnapshot(MotorflowSnapshot snapshot) async {
     _snapshot = snapshot;
   }
+
+  @override
+  Future<void> close() async {}
 }

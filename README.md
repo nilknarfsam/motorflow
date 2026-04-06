@@ -46,6 +46,7 @@ O MotorFlow foi pensado para ajudar o usuário a manter o carro em dia, organiza
 - Cálculo automático de litros
 - Configuração de preço padrão da gasolina
 - Persistência local simples em memória
+- Persistência local real com Isar (snapshot versionado)
 - Tema visual centralizado com identidade premium
 - Componentes reutilizáveis `mf_*` para listas, métricas e estados vazios
 
@@ -57,12 +58,19 @@ O MotorFlow foi pensado para ajudar o usuário a manter o carro em dia, organiza
 
 ## Próximas evoluções
 
-- Persistência local real (adapter SQLite/Hive/Isar)
 - Notificações e lembretes
 - Relatórios e gráficos
 - Central de alertas
 - Múltiplos veículos
 - Backup e restauração
+
+## Persistência local
+
+- Implementação principal em `data/local/isar_motorflow_local_store.dart`
+- Contrato assíncrono em `data/local/motorflow_local_store.dart`
+- Snapshot com `schemaVersion = 1` e chave fixa (`primaryKey = 1`)
+- Mapeamento desacoplado em `data/local/mapper/snapshot_mapper.dart`
+- Fail-safe no carregamento e escrita para manter app funcional mesmo em erro de storage
 
 ## Tecnologias
 

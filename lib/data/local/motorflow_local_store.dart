@@ -1,6 +1,7 @@
 import 'package:motorflow/data/models/motorflow_snapshot.dart';
 
 abstract class MotorflowLocalStore {
-  MotorflowSnapshot? readSnapshot();
-  void writeSnapshot(MotorflowSnapshot snapshot);
+  Future<MotorflowSnapshot?> readSnapshot();
+  Future<void> writeSnapshot(MotorflowSnapshot snapshot);
+  Future<void> close();
 }
