@@ -44,11 +44,28 @@ class MotorflowTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
+        height: 76,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: scheme.surface,
         indicatorColor: scheme.primaryContainer,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
+            fontSize: 11.5,
+            height: 1.05,
+            letterSpacing: -0.2,
             fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: selected ? scheme.onSurface : scheme.onSurfaceVariant,
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            size: 22,
+            color: selected ? scheme.onSurface : scheme.onSurfaceVariant,
           );
         }),
       ),

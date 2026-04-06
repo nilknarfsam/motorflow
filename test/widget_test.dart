@@ -10,10 +10,10 @@ void main() {
     );
     await tester.pumpWidget(MotorflowApp(repository: repository));
 
-    expect(find.text('Dashboard'), findsWidgets);
-    expect(find.text('Veiculos'), findsWidgets);
-    expect(find.text('Manutencoes'), findsWidgets);
-    expect(find.text('Abastecimentos'), findsWidgets);
-    expect(find.text('Configuracoes'), findsWidgets);
+    expect(find.text('Início'), findsWidgets);
+    expect(find.text('Carros'), findsWidgets);
+    expect(find.text('Serviços'), findsWidgets);
+    expect(find.text('Combustível'), findsWidgets);
+    expect(find.text('Ajustes'), findsWidgets);
   });
 }

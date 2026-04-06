@@ -34,31 +34,32 @@ class _HomeShellState extends State<HomeShell> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            label: 'Início',
           ),
           NavigationDestination(
             icon: Icon(Icons.directions_car_outlined),
             selectedIcon: Icon(Icons.directions_car),
-            label: 'Veiculos',
+            label: 'Carros',
           ),
           NavigationDestination(
             icon: Icon(Icons.build_outlined),
             selectedIcon: Icon(Icons.build),
-            label: 'Manutencoes',
+            label: 'Serviços',
           ),
           NavigationDestination(
             icon: Icon(Icons.local_gas_station_outlined),
             selectedIcon: Icon(Icons.local_gas_station),
-            label: 'Abastecimentos',
+            label: 'Combustível',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
-            label: 'Configuracoes',
+            label: 'Ajustes',
           ),
         ],
         onDestinationSelected: (index) {
