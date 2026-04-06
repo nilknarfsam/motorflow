@@ -40,37 +40,49 @@ class VehicleDetailPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              Text('Ultimas manutencoes', style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Ultimas manutencoes',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               if (maintenances.isEmpty)
                 const Text('Nenhuma manutencao registrada.')
               else
-                ...maintenances.take(3).map(
-                  (m) => Card(
-                    child: ListTile(
-                      title: Text(m.tipo),
-                      subtitle: Text(
-                        '${m.descricao}\nTroca: ${m.kmTroca} km em ${_dateFormat.format(m.dataTroca)}',
+                ...maintenances
+                    .take(3)
+                    .map(
+                      (m) => Card(
+                        child: ListTile(
+                          title: Text(m.tipo),
+                          subtitle: Text(
+                            '${m.descricao}\nTroca: ${m.kmTroca} km em ${_dateFormat.format(m.dataTroca)}',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
               const SizedBox(height: 12),
-              Text('Ultimos abastecimentos', style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Ultimos abastecimentos',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               if (fuels.isEmpty)
                 const Text('Nenhum abastecimento registrado.')
               else
-                ...fuels.take(3).map(
-                  (f) => Card(
-                    child: ListTile(
-                      title: Text('${f.tipoCombustivel} - R\$ ${f.valorTotal.toStringAsFixed(2)}'),
-                      subtitle: Text(
-                        '${f.litros.toStringAsFixed(2)} L em ${_dateFormat.format(f.data)}',
+                ...fuels
+                    .take(3)
+                    .map(
+                      (f) => Card(
+                        child: ListTile(
+                          title: Text(
+                            '${f.tipoCombustivel} - R\$ ${f.valorTotal.toStringAsFixed(2)}',
+                          ),
+                          subtitle: Text(
+                            '${f.litros.toStringAsFixed(2)} L em ${_dateFormat.format(f.data)}',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
             ],
           ),
         );

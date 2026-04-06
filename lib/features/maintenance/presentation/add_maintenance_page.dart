@@ -93,7 +93,9 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
               ),
               TextFormField(
                 controller: _kmProximaController,
-                decoration: const InputDecoration(labelText: 'KM proxima troca'),
+                decoration: const InputDecoration(
+                  labelText: 'KM proxima troca',
+                ),
                 keyboardType: TextInputType.number,
                 validator: _intValidator,
               ),
@@ -124,7 +126,9 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
               TextFormField(
                 controller: _custoController,
                 decoration: const InputDecoration(labelText: 'Custo'),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 validator: _doubleValidator,
               ),
               const SizedBox(height: 20),

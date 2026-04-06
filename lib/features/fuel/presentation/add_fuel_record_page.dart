@@ -35,8 +35,11 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
       _selectedVehicle = vehicles.first;
     }
     _dataController.text = formatDatePtBr(_data);
-    _precoLitroController.text =
-        widget.repository.fuelSettings.precoPadraoGasolina.toStringAsFixed(2);
+    _precoLitroController.text = widget
+        .repository
+        .fuelSettings
+        .precoPadraoGasolina
+        .toStringAsFixed(2);
   }
 
   @override
@@ -103,7 +106,9 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               ),
               TextFormField(
                 controller: _tipoCombustivelController,
-                decoration: const InputDecoration(labelText: 'Tipo combustivel'),
+                decoration: const InputDecoration(
+                  labelText: 'Tipo combustivel',
+                ),
                 validator: _requiredValidator,
               ),
               SwitchListTile(
@@ -114,7 +119,9 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
                     _usarPrecoPadraoGasolina = value;
                     if (value) {
                       _precoLitroController.text = widget
-                          .repository.fuelSettings.precoPadraoGasolina
+                          .repository
+                          .fuelSettings
+                          .precoPadraoGasolina
                           .toStringAsFixed(2);
                       _calcularLitros();
                     }
@@ -124,20 +131,26 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               TextFormField(
                 controller: _precoLitroController,
                 decoration: const InputDecoration(labelText: 'Preco por litro'),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 onChanged: (_) => _calcularLitros(),
                 validator: _doubleValidator,
               ),
               TextFormField(
                 controller: _valorTotalController,
                 decoration: const InputDecoration(labelText: 'Valor total'),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 onChanged: (_) => _calcularLitros(),
                 validator: _doubleValidator,
               ),
               TextFormField(
                 controller: _litrosController,
-                decoration: const InputDecoration(labelText: 'Litros calculados'),
+                decoration: const InputDecoration(
+                  labelText: 'Litros calculados',
+                ),
                 readOnly: true,
               ),
               TextFormField(
@@ -190,8 +203,12 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
   }
 
   void _calcularLitros() {
-    final preco = double.tryParse(_precoLitroController.text.replaceAll(',', '.'));
-    final total = double.tryParse(_valorTotalController.text.replaceAll(',', '.'));
+    final preco = double.tryParse(
+      _precoLitroController.text.replaceAll(',', '.'),
+    );
+    final total = double.tryParse(
+      _valorTotalController.text.replaceAll(',', '.'),
+    );
     if (preco == null || total == null || preco <= 0) {
       _litrosController.text = '';
       return;

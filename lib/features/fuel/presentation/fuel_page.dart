@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:motorflow/core/theme/motorflow_spacing.dart';
+import 'package:motorflow/core/widgets/mf_empty_state.dart';
+import 'package:motorflow/core/widgets/mf_list_item_card.dart';
+import 'package:motorflow/core/widgets/mf_page_scaffold.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 import 'package:motorflow/features/fuel/presentation/add_fuel_record_page.dart';
 
@@ -15,37 +19,41 @@ class FuelPage extends StatelessWidget {
       animation: repository,
       builder: (context, _) {
         final items = repository.fuelRecords;
-        return Scaffold(
-          appBar: AppBar(title: const Text('Abastecimentos')),
+        return MfPageScaffold(
+          title: 'Abastecimentos',
           floatingActionButton: FloatingActionButton.extended(
             onPressed: repository.vehicles.isEmpty
                 ? null
                 : () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => AddFuelRecordPage(repository: repository),
+                        builder: (_) =>
+                            AddFuelRecordPage(repository: repository),
                       ),
                     );
                   },
             icon: const Icon(Icons.add),
             label: const Text('Adicionar'),
           ),
-          body: items.isEmpty
-              ? const Center(
-                  child: Text('Nenhum abastecimento registrado.\nCadastre um veiculo primeiro.'),
+          child: items.isEmpty
+              ? const MfEmptyState(
+                  icon: Icons.local_gas_station_outlined,
+                  title: 'Nenhum abastecimento registrado',
+                  message: 'Cadastre um veiculo para registrar abastecimentos.',
                 )
               : ListView.separated(
                   itemCount: items.length,
-                  separatorBuilder: (_, _) => const Divider(height: 0),
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(height: MotorflowSpacing.sm),
                   itemBuilder: (context, index) {
                     final item = items[index];
                     final vehicle = repository.vehicleById(item.vehicleId);
-                    return ListTile(
-                      leading: const Icon(Icons.local_gas_station),
-                      title: Text('${item.tipoCombustivel} - ${vehicle?.nome ?? 'Veiculo'}'),
-                      subtitle: Text(
-                        'R\$ ${item.valorTotal.toStringAsFixed(2)} | ${item.litros.toStringAsFixed(2)} L | ${_dateFormat.format(item.data)}',
-                      ),
+                    return MfListItemCard(
+                      icon: Icons.local_gas_station_outlined,
+                      title:
+                          '${item.tipoCombustivel} - ${vehicle?.nome ?? 'Veiculo'}',
+                      subtitle:
+                          'R\$ ${item.valorTotal.toStringAsFixed(2)} | ${item.litros.toStringAsFixed(2)} L | ${_dateFormat.format(item.data)}',
                     );
                   },
                 ),

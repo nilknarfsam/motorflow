@@ -3,6 +3,7 @@ import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 import 'package:motorflow/features/dashboard/presentation/dashboard_page.dart';
 import 'package:motorflow/features/fuel/presentation/fuel_page.dart';
 import 'package:motorflow/features/maintenance/presentation/maintenance_page.dart';
+import 'package:motorflow/features/settings/presentation/settings_page.dart';
 import 'package:motorflow/features/vehicle/presentation/vehicle_page.dart';
 
 class HomeShell extends StatefulWidget {
@@ -24,14 +25,12 @@ class _HomeShellState extends State<HomeShell> {
       VehiclePage(repository: widget.repository),
       MaintenancePage(repository: widget.repository),
       FuelPage(repository: widget.repository),
+      SettingsPage(repository: widget.repository),
     ];
 
     return Scaffold(
       body: SafeArea(
-        child: IndexedStack(
-          index: _currentIndex,
-          children: pages,
-        ),
+        child: IndexedStack(index: _currentIndex, children: pages),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
@@ -55,6 +54,11 @@ class _HomeShellState extends State<HomeShell> {
             icon: Icon(Icons.local_gas_station_outlined),
             selectedIcon: Icon(Icons.local_gas_station),
             label: 'Abastecimentos',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Configuracoes',
           ),
         ],
         onDestinationSelected: (index) {

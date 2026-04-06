@@ -1,3 +1,6 @@
+import 'package:motorflow/data/local/memory_motorflow_local_store.dart';
+import 'package:motorflow/data/local/motorflow_local_store.dart';
+import 'package:motorflow/data/models/motorflow_snapshot.dart';
 import 'package:motorflow/domain/entities/fuel_record.dart';
 import 'package:motorflow/domain/entities/fuel_settings.dart';
 import 'package:motorflow/domain/entities/maintenance.dart';
@@ -5,6 +8,12 @@ import 'package:motorflow/domain/entities/vehicle.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class InMemoryMotorflowRepository extends MotorflowRepository {
+  InMemoryMotorflowRepository({MotorflowLocalStore? localStore})
+    : _localStore = localStore ?? MemoryMotorflowLocalStore() {
+    _hydrateFromSnapshot();
+  }
+
+  final MotorflowLocalStore _localStore;
   final List<Vehicle> _vehicles = <Vehicle>[];
   final List<Maintenance> _maintenances = <Maintenance>[];
   final List<FuelRecord> _fuelRecords = <FuelRecord>[];
@@ -68,6 +77,7 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         kmAtual: kmAtual,
       ),
     );
+    _persistSnapshot();
     notifyListeners();
   }
 
@@ -96,6 +106,7 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         custo: custo,
       ),
     );
+    _persistSnapshot();
     notifyListeners();
   }
 
@@ -126,6 +137,7 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
         observacoes: observacoes,
       ),
     );
+    _persistSnapshot();
     notifyListeners();
   }
 
@@ -140,6 +152,40 @@ class InMemoryMotorflowRepository extends MotorflowRepository {
       precoPadraoEtanol: precoPadraoEtanol,
       precoPadraoDiesel: precoPadraoDiesel,
     );
+    _persistSnapshot();
     notifyListeners();
+  }
+
+  void _hydrateFromSnapshot() {
+    final snapshot = _localStore.readSnapshot();
+    if (snapshot == null) {
+      return;
+    }
+    _vehicles
+      ..clear()
+      ..addAll(snapshot.vehicles);
+    _maintenances
+      ..clear()
+      ..addAll(snapshot.maintenances);
+    _fuelRecords
+      ..clear()
+      ..addAll(snapshot.fuelRecords);
+    _fuelSettings = snapshot.fuelSettings;
+    _vehicleCounter = snapshot.vehicleCounter;
+    _maintenanceCounter = snapshot.maintenanceCounter;
+    _fuelCounter = snapshot.fuelCounter;
+  }
+
+  void _persistSnapshot() {
+    final snapshot = MotorflowSnapshot(
+      vehicles: List<Vehicle>.from(_vehicles),
+      maintenances: List<Maintenance>.from(_maintenances),
+      fuelRecords: List<FuelRecord>.from(_fuelRecords),
+      fuelSettings: _fuelSettings,
+      vehicleCounter: _vehicleCounter,
+      maintenanceCounter: _maintenanceCounter,
+      fuelCounter: _fuelCounter,
+    );
+    _localStore.writeSnapshot(snapshot);
   }
 }
