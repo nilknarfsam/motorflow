@@ -79,7 +79,9 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Editar abastecimento' : 'Novo abastecimento'),
+        title: Text(
+          _isEditing ? 'Editar abastecimento' : 'Novo abastecimento',
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -98,9 +100,9 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
                     )
                     .toList(),
                 onChanged: (value) => setState(() => _selectedVehicle = value),
-                decoration: const InputDecoration(labelText: 'Veiculo'),
+                decoration: const InputDecoration(labelText: 'Veículo'),
                 validator: (value) =>
-                    value == null ? 'Selecione um veiculo' : null,
+                    value == null ? 'Selecione um veículo' : null,
               ),
               TextFormField(
                 controller: _dataController,
@@ -122,19 +124,21 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               ),
               TextFormField(
                 controller: _kmAtualController,
-                decoration: const InputDecoration(labelText: 'KM atual'),
+                decoration: const InputDecoration(
+                  labelText: 'Quilometragem atual',
+                ),
                 keyboardType: TextInputType.number,
                 validator: _intValidator,
               ),
               TextFormField(
                 controller: _tipoCombustivelController,
                 decoration: const InputDecoration(
-                  labelText: 'Tipo combustivel',
+                  labelText: 'Tipo de combustível',
                 ),
                 validator: _requiredValidator,
               ),
               SwitchListTile(
-                title: const Text('Usar preco padrao da gasolina'),
+                title: const Text('Usar preço padrão da gasolina'),
                 value: _usarPrecoPadraoGasolina,
                 onChanged: (value) {
                   setState(() {
@@ -152,7 +156,7 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               ),
               TextFormField(
                 controller: _precoLitroController,
-                decoration: const InputDecoration(labelText: 'Preco por litro'),
+                decoration: const InputDecoration(labelText: 'Preço por litro'),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
@@ -171,7 +175,7 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               TextFormField(
                 controller: _litrosController,
                 decoration: const InputDecoration(
-                  labelText: 'Litros calculados',
+                  labelText: 'Litros (calculado)',
                 ),
                 readOnly: true,
               ),
@@ -182,13 +186,13 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
               ),
               TextFormField(
                 controller: _observacoesController,
-                decoration: const InputDecoration(labelText: 'Observacoes'),
+                decoration: const InputDecoration(labelText: 'Observações'),
               ),
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: _save,
                 child: Text(
-                  _isEditing ? 'Salvar alteracoes' : 'Salvar abastecimento',
+                  _isEditing ? 'Salvar alterações' : 'Salvar',
                 ),
               ),
             ],
@@ -200,28 +204,28 @@ class _AddFuelRecordPageState extends State<AddFuelRecordPage> {
 
   String? _requiredValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     return null;
   }
 
   String? _intValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     if (int.tryParse(value) == null) {
-      return 'Numero inteiro invalido';
+      return 'Número inteiro inválido';
     }
     return null;
   }
 
   String? _doubleValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     final parsed = double.tryParse(value.replaceAll(',', '.'));
     if (parsed == null || parsed <= 0) {
-      return 'Numero invalido';
+      return 'Número inválido';
     }
     return null;
   }

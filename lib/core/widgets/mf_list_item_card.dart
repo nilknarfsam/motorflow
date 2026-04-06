@@ -40,11 +40,18 @@ class MfListItemCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: MotorflowSpacing.xxs),
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (footer != null) ...[
                       const SizedBox(height: MotorflowSpacing.xs),

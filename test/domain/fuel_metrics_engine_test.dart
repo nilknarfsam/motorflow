@@ -72,5 +72,27 @@ void main() {
       expect(summary.averageConsumptionKmPerLiter, isNull);
       expect(summary.averageCostPerKm, isNull);
     });
+
+    test('agrega métricas por veículo no histórico', () {
+      final rollups = FuelMetricsEngine.buildVehicleFuelRollups(records: records);
+      expect(rollups.length, 1);
+      expect(rollups.single.vehicleId, 'v1');
+      expect(rollups.single.validPairCount, 1);
+      expect(rollups.single.averageConsumptionKmPerLiter, closeTo(10, 0.001));
+      expect(rollups.single.averageCostPerKm, closeTo(0.56, 0.001));
+    });
+
+    test('resumo mensal por veículo inclui consumo quando há par válido', () {
+      final list = FuelMetricsEngine.buildVehicleMonthlySummaries(
+        records: records,
+        now: DateTime(2026, 4, 25),
+      );
+      final v1 = list.firstWhere((s) => s.vehicleId == 'v1');
+      expect(v1.averageConsumptionKmPerLiter, closeTo(10, 0.001));
+      expect(v1.averageCostPerKm, closeTo(0.56, 0.001));
+      final v2 = list.firstWhere((s) => s.vehicleId == 'v2');
+      expect(v2.averageConsumptionKmPerLiter, isNull);
+      expect(v2.averageCostPerKm, isNull);
+    });
   });
 }

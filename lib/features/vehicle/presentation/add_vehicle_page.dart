@@ -46,7 +46,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Editar veiculo' : 'Novo veiculo'),
+        title: Text(_isEditing ? 'Editar veículo' : 'Novo veículo'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -72,7 +72,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
               ),
               TextFormField(
                 controller: _kmAtualController,
-                decoration: const InputDecoration(labelText: 'KM atual'),
+                decoration: const InputDecoration(labelText: 'Quilometragem atual'),
                 keyboardType: TextInputType.number,
                 validator: _numberValidator,
               ),
@@ -80,7 +80,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
               FilledButton(
                 onPressed: _save,
                 child: Text(
-                  _isEditing ? 'Salvar alteracoes' : 'Salvar veiculo',
+                  _isEditing ? 'Salvar alterações' : 'Salvar',
                 ),
               ),
             ],
@@ -92,17 +92,17 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
 
   String? _requiredValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     return null;
   }
 
   String? _numberValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     if (int.tryParse(value) == null) {
-      return 'Digite um numero inteiro';
+      return 'Digite um número inteiro';
     }
     return null;
   }

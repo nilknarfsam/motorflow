@@ -29,7 +29,7 @@ class VehiclePage extends StatelessWidget {
           vehicles: vehicles,
         );
         return MfPageScaffold(
-          title: 'Veiculos',
+          title: 'Carros',
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               Navigator.of(context).push(
@@ -44,8 +44,8 @@ class VehiclePage extends StatelessWidget {
           child: vehicles.isEmpty
               ? const MfEmptyState(
                   icon: Icons.directions_car_outlined,
-                  title: 'Nenhum veiculo cadastrado',
-                  message: 'Cadastre seu primeiro veiculo para iniciar.',
+                  title: 'Nenhum veículo cadastrado',
+                  message: 'Cadastre seu primeiro veículo para começar.',
                 )
               : ListView.separated(
                   itemCount: vehicles.length,
@@ -147,9 +147,9 @@ class VehiclePage extends StatelessWidget {
   ) async {
     final confirmed = await showMfConfirmDialog(
       context: context,
-      title: 'Excluir veiculo',
+      title: 'Excluir veículo',
       message:
-          'Deseja excluir ${vehicle.nome}? As manutencoes e abastecimentos vinculados tambem serao removidos.',
+          'Deseja excluir ${vehicle.nome}? Manutenções e abastecimentos vinculados também serão removidos.',
     );
     if (!confirmed) {
       return;
@@ -160,7 +160,7 @@ class VehiclePage extends StatelessWidget {
     }
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Veiculo excluido.')));
+    ).showSnackBar(const SnackBar(content: Text('Veículo excluído.')));
   }
 }
 

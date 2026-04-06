@@ -14,16 +14,16 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final fuel = repository.fuelSettings;
     return MfPageScaffold(
-      title: 'Configuracoes',
+      title: 'Ajustes',
       child: ListView(
         children: [
           const MfSectionHeader(
-            title: 'Preferencias',
+            title: 'Preferências',
             subtitle: 'Ajustes visuais e operacionais do MotorFlow.',
           ),
           const SizedBox(height: MotorflowSpacing.md),
           SettingsGroup(
-            title: 'Combustivel padrao',
+            title: 'Combustível padrão',
             children: [
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -53,19 +53,21 @@ class SettingsPage extends StatelessWidget {
           ),
           const SizedBox(height: MotorflowSpacing.md),
           const SettingsGroup(
-            title: 'Roadmap tecnico',
+            title: 'Roadmap técnico',
             children: [
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.storage_outlined),
-                title: Text('Persistencia local real'),
-                subtitle: Text('Base pronta para adaptador SQLite/Hive/Isar.'),
+                title: Text('Persistência local (Isar)'),
+                subtitle: Text(
+                  'Dados salvos no dispositivo com Isar; base preparada para evoluir.',
+                ),
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.notifications_active_outlined),
                 title: Text('Lembretes inteligentes'),
-                subtitle: Text('Alertas por km e data para manutencoes.'),
+                subtitle: Text('Alertas por quilometragem e data nas manutenções.'),
               ),
             ],
           ),

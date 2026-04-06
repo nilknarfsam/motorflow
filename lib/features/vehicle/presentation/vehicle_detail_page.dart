@@ -23,12 +23,14 @@ class VehicleDetailPage extends StatelessWidget {
         final vehicle = repository.vehicleById(vehicleId);
         if (vehicle == null) {
           return const Scaffold(
-            body: Center(child: Text('Veiculo nao encontrado')),
+            body: Center(child: Text('Veículo não encontrado')),
           );
         }
 
-        final maintenances = repository.maintenancesByVehicle(vehicleId);
-        final fuels = repository.fuelRecordsByVehicle(vehicleId);
+        final maintenances = [...repository.maintenancesByVehicle(vehicleId)]
+          ..sort((a, b) => b.dataTroca.compareTo(a.dataTroca));
+        final fuels = [...repository.fuelRecordsByVehicle(vehicleId)]
+          ..sort((a, b) => b.data.compareTo(a.data));
 
         return Scaffold(
           appBar: AppBar(
@@ -52,9 +54,9 @@ class VehicleDetailPage extends StatelessWidget {
                 onPressed: () async {
                   final confirmed = await showMfConfirmDialog(
                     context: context,
-                    title: 'Excluir veiculo',
+                    title: 'Excluir veículo',
                     message:
-                        'Deseja excluir ${vehicle.nome}? As manutencoes e abastecimentos vinculados tambem serao removidos.',
+                        'Deseja excluir ${vehicle.nome}? Manutenções e abastecimentos vinculados também serão removidos.',
                   );
                   if (!confirmed) {
                     return;
@@ -64,7 +66,7 @@ class VehicleDetailPage extends StatelessWidget {
                     return;
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Veiculo excluido.')),
+                    const SnackBar(content: Text('Veículo excluído.')),
                   );
                   Navigator.of(context).pop();
                 },
@@ -79,17 +81,17 @@ class VehicleDetailPage extends StatelessWidget {
               Card(
                 child: ListTile(
                   title: Text('${vehicle.modelo} (${vehicle.ano})'),
-                  subtitle: Text('KM atual: ${vehicle.kmAtual}'),
+                  subtitle: Text('Quilometragem atual: ${vehicle.kmAtual} km'),
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                'Ultimas manutencoes',
+                'Últimas manutenções',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               if (maintenances.isEmpty)
-                const Text('Nenhuma manutencao registrada.')
+                const Text('Nenhuma manutenção registrada.')
               else
                 ...maintenances
                     .take(3)
@@ -105,7 +107,7 @@ class VehicleDetailPage extends StatelessWidget {
                     ),
               const SizedBox(height: 12),
               Text(
-                'Ultimos abastecimentos',
+                'Últimos abastecimentos',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),

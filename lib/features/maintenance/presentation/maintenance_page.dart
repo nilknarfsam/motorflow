@@ -33,7 +33,7 @@ class MaintenancePage extends StatelessWidget {
           for (final alert in alerts) alert.maintenanceId: alert.status,
         };
         return MfPageScaffold(
-          title: 'Manutencoes',
+          title: 'Serviços',
           floatingActionButton: FloatingActionButton.extended(
             onPressed: repository.vehicles.isEmpty
                 ? null
@@ -46,13 +46,14 @@ class MaintenancePage extends StatelessWidget {
                     );
                   },
             icon: const Icon(Icons.add),
-            label: const Text('Adicionar'),
+            label: const Text('Nova manutenção'),
           ),
           child: items.isEmpty
               ? const MfEmptyState(
                   icon: Icons.build_circle_outlined,
-                  title: 'Nenhuma manutencao registrada',
-                  message: 'Cadastre um veiculo para registrar manutencoes.',
+                  title: 'Nenhuma manutenção registrada',
+                  message:
+                      'Cadastre um veículo antes de registrar manutenções.',
                 )
               : ListView.separated(
                   itemCount: items.length,
@@ -63,7 +64,7 @@ class MaintenancePage extends StatelessWidget {
                     final vehicle = repository.vehicleById(item.vehicleId);
                     return MfListItemCard(
                       icon: Icons.build_circle_outlined,
-                      title: '${item.tipo} - ${vehicle?.nome ?? 'Veiculo'}',
+                      title: '${item.tipo} — ${vehicle?.nome ?? 'Veículo'}',
                       subtitle:
                           '${item.descricao}\nR\$ ${item.custo.toStringAsFixed(2)} | ${_dateFormat.format(item.dataTroca)}',
                       footer: Align(
@@ -114,9 +115,9 @@ class MaintenancePage extends StatelessWidget {
   ) async {
     final confirmed = await showMfConfirmDialog(
       context: context,
-      title: 'Excluir manutencao',
+      title: 'Excluir manutenção',
       message:
-          'Deseja excluir esta manutencao? Essa acao nao pode ser desfeita.',
+          'Deseja excluir esta manutenção? Essa ação não pode ser desfeita.',
     );
     if (!confirmed) {
       return;
@@ -127,7 +128,7 @@ class MaintenancePage extends StatelessWidget {
     }
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Manutencao excluida.')));
+    ).showSnackBar(const SnackBar(content: Text('Manutenção excluída.')));
   }
 }
 

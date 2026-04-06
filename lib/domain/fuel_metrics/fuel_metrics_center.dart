@@ -27,4 +27,10 @@ class FuelMetricsCenter {
       now: now,
     );
   }
+
+  List<VehicleFuelRollup> buildVehicleFuelRollups({
+    required List<FuelRecord> records,
+  }) {
+    return FuelMetricsEngine.buildVehicleFuelRollups(records: records);
+  }
 }

@@ -16,7 +16,7 @@ class MfStatusChip extends StatelessWidget {
         scheme.onErrorContainer,
       ),
       MaintenanceAlertStatus.dueSoon => (
-        'Proximo',
+        'Próximo',
         scheme.tertiaryContainer,
         scheme.onTertiaryContainer,
       ),

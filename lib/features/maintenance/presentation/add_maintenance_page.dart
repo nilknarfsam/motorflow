@@ -71,7 +71,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
     final vehicles = widget.repository.vehicles;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Editar manutencao' : 'Nova manutencao'),
+        title: Text(_isEditing ? 'Editar manutenção' : 'Nova manutenção'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -90,9 +90,9 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
                     )
                     .toList(),
                 onChanged: (value) => setState(() => _selectedVehicle = value),
-                decoration: const InputDecoration(labelText: 'Veiculo'),
+                decoration: const InputDecoration(labelText: 'Veículo'),
                 validator: (value) =>
-                    value == null ? 'Selecione um veiculo' : null,
+                    value == null ? 'Selecione um veículo' : null,
               ),
               TextFormField(
                 controller: _tipoController,
@@ -101,19 +101,21 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
               ),
               TextFormField(
                 controller: _descricaoController,
-                decoration: const InputDecoration(labelText: 'Descricao'),
+                decoration: const InputDecoration(labelText: 'Descrição'),
                 validator: _requiredValidator,
               ),
               TextFormField(
                 controller: _kmTrocaController,
-                decoration: const InputDecoration(labelText: 'KM da troca'),
+                decoration: const InputDecoration(
+                  labelText: 'Quilometragem da troca',
+                ),
                 keyboardType: TextInputType.number,
                 validator: _intValidator,
               ),
               TextFormField(
                 controller: _kmProximaController,
                 decoration: const InputDecoration(
-                  labelText: 'KM proxima troca',
+                  labelText: 'Quilometragem da próxima troca',
                 ),
                 keyboardType: TextInputType.number,
                 validator: _intValidator,
@@ -131,7 +133,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
                 },
               ),
               _DateInput(
-                label: 'Data proxima troca',
+                label: 'Data da próxima troca',
                 controller: _dataProximaController,
                 onTap: () async {
                   final date = await _pickDate(_dataProxima);
@@ -154,7 +156,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
               FilledButton(
                 onPressed: _save,
                 child: Text(
-                  _isEditing ? 'Salvar alteracoes' : 'Salvar manutencao',
+                  _isEditing ? 'Salvar alterações' : 'Salvar',
                 ),
               ),
             ],
@@ -166,28 +168,28 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
 
   String? _requiredValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     return null;
   }
 
   String? _intValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     if (int.tryParse(value) == null) {
-      return 'Numero inteiro invalido';
+      return 'Número inteiro inválido';
     }
     return null;
   }
 
   String? _doubleValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio';
+      return 'Campo obrigatório';
     }
     final parsed = double.tryParse(value.replaceAll(',', '.'));
     if (parsed == null) {
-      return 'Numero invalido';
+      return 'Número inválido';
     }
     return null;
   }
@@ -253,7 +255,7 @@ class _DateInput extends StatelessWidget {
       onTap: onTap,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Campo obrigatorio';
+          return 'Campo obrigatório';
         }
         return null;
       },

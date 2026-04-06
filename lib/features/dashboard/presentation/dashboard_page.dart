@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motorflow/core/theme/motorflow_spacing.dart';
+import 'package:motorflow/core/widgets/mf_fuel_monthly_summary_card.dart';
 import 'package:motorflow/core/widgets/mf_metric_card.dart';
 import 'package:motorflow/core/widgets/mf_page_scaffold.dart';
 import 'package:motorflow/core/widgets/mf_section_header.dart';
@@ -8,7 +9,6 @@ import 'package:motorflow/domain/alerts/maintenance_alert.dart';
 import 'package:motorflow/domain/alerts/maintenance_alert_center.dart';
 import 'package:motorflow/domain/alerts/maintenance_alert_summary.dart';
 import 'package:motorflow/domain/fuel_metrics/fuel_metrics_center.dart';
-import 'package:motorflow/domain/fuel_metrics/fuel_metrics_models.dart';
 import 'package:motorflow/domain/repositories/motorflow_repository.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -55,22 +55,22 @@ class _DashboardPageState extends State<DashboardPage> {
           records: widget.repository.fuelRecords,
         );
         return MfPageScaffold(
-          title: 'Dashboard',
+          title: 'Início',
           child: ListView(
             children: [
               const MfSectionHeader(
-                title: 'Visao geral',
-                subtitle: 'Controle de frota, manutencoes e abastecimentos.',
+                title: 'Visão geral',
+                subtitle: 'Controle de frota, manutenções e abastecimentos.',
               ),
               const SizedBox(height: MotorflowSpacing.md),
               MfMetricCard(
-                title: 'Veiculos',
+                title: 'Veículos',
                 value: '${widget.repository.vehicles.length}',
                 icon: Icons.directions_car_filled_outlined,
               ),
               const SizedBox(height: MotorflowSpacing.sm),
               MfMetricCard(
-                title: 'Manutencoes',
+                title: 'Manutenções',
                 value: '${widget.repository.maintenances.length}',
                 icon: Icons.build_circle_outlined,
               ),
@@ -81,9 +81,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 icon: Icons.local_gas_station_outlined,
               ),
               const SizedBox(height: MotorflowSpacing.lg),
-              _MaintenanceAlertsCard(summary: summary),
+              MfFuelMonthlySummaryCard(
+                summary: fuelSummary,
+                subtitle:
+                    'Indicadores do mês atual. Consumo e custo por km usam intervalos consecutivos válidos.',
+              ),
               const SizedBox(height: MotorflowSpacing.lg),
-              _FuelMetricsCard(summary: fuelSummary),
+              _MaintenanceAlertsCard(summary: summary),
               const SizedBox(height: MotorflowSpacing.lg),
               Card(
                 child: Padding(
@@ -92,7 +96,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Preco padrao gasolina',
+                        'Preço padrão (gasolina)',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: MotorflowSpacing.sm),
@@ -110,7 +114,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             _gasolinaController.text.replaceAll(',', '.'),
                           );
                           if (parsed == null || parsed <= 0) {
-                            _showError('Informe um valor valido.');
+                            _showError('Informe um valor válido.');
                             return;
                           }
                           widget.repository.updateFuelSettings(
@@ -123,11 +127,11 @@ class _DashboardPageState extends State<DashboardPage> {
                               .toStringAsFixed(2);
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Preco padrao atualizado.'),
+                              content: Text('Preço padrão atualizado.'),
                             ),
                           );
                         },
-                        child: const Text('Salvar preco'),
+                        child: const Text('Salvar preço'),
                       ),
                       const SizedBox(height: MotorflowSpacing.xs),
                       Text(
@@ -151,99 +155,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-class _FuelMetricsCard extends StatelessWidget {
-  const _FuelMetricsCard({required this.summary});
-
-  final FuelMetricsSummary summary;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(MotorflowSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Inteligencia de combustivel',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: MotorflowSpacing.sm),
-            Wrap(
-              spacing: MotorflowSpacing.sm,
-              runSpacing: MotorflowSpacing.sm,
-              children: [
-                _FuelMetricTile(
-                  label: 'Consumo medio',
-                  value: _formatMetric(
-                    summary.averageConsumptionKmPerLiter,
-                    suffix: ' km/L',
-                  ),
-                ),
-                _FuelMetricTile(
-                  label: 'Custo por km',
-                  value: _formatMetric(
-                    summary.averageCostPerKm,
-                    prefix: 'R\$ ',
-                  ),
-                ),
-                _FuelMetricTile(
-                  label: 'Gasto no mes',
-                  value: 'R\$ ${summary.totalSpentMonth.toStringAsFixed(2)}',
-                ),
-                _FuelMetricTile(
-                  label: 'Litros no mes',
-                  value: '${summary.totalLitersMonth.toStringAsFixed(2)} L',
-                ),
-                _FuelMetricTile(
-                  label: 'Preco medio/L',
-                  value: _formatMetric(
-                    summary.averagePricePerLiterMonth,
-                    prefix: 'R\$ ',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatMetric(
-    double? value, {
-    String prefix = '',
-    String suffix = '',
-  }) {
-    if (value == null) {
-      return '--';
-    }
-    return '$prefix${value.toStringAsFixed(2)}$suffix';
-  }
-}
-
-class _FuelMetricTile extends StatelessWidget {
-  const _FuelMetricTile({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 150,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(height: MotorflowSpacing.xxs),
-          Text(value, style: Theme.of(context).textTheme.titleMedium),
-        ],
-      ),
-    );
-  }
-}
-
 class _MaintenanceAlertsCard extends StatelessWidget {
   const _MaintenanceAlertsCard({required this.summary});
 
@@ -258,12 +169,12 @@ class _MaintenanceAlertsCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Alertas de manutencao',
+              'Alertas de manutenção',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: MotorflowSpacing.xs),
             Text(
-              '${summary.totalAlerts} alerta(s) ativo(s) de ${summary.total} manutencao(oes).',
+              '${summary.totalAlerts} ${summary.totalAlerts == 1 ? 'alerta ativo' : 'alertas ativos'} entre ${summary.total} manutenções.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: MotorflowSpacing.sm),
@@ -277,7 +188,7 @@ class _MaintenanceAlertsCard extends StatelessWidget {
                   status: MaintenanceAlertStatus.overdue,
                 ),
                 _LabeledStatusChip(
-                  label: 'Proximo',
+                  label: 'Próximo',
                   count: summary.dueSoon,
                   status: MaintenanceAlertStatus.dueSoon,
                 ),
