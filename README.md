@@ -1,3 +1,14 @@
+<!-- organizacao-github:inicio -->
+> [!NOTE]
+> **📌 Organização do GitHub (22/10/2026): 📦 ARQUIVAR**
+>
+> 10 commits num dia só, em abril. Fica como portfólio Flutter.
+>
+> **Como fazer:** Settings → lá embaixo em **Danger Zone** → **Archive this repository**. Fica só leitura e dá para desarquivar depois.
+>
+> _Nota temporária do Claude. Some quando a organização terminar._
+<!-- organizacao-github:fim -->
+
 # MotorFlow
 
 **MotorFlow** é um aplicativo mobile para **gestão automotiva pessoal**: veículos, manutenções, abastecimentos e visão consolidada de custos e consumo — com experiência **Material 3**, dados **locais** e foco em clareza no dia a dia.
